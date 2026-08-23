@@ -95,6 +95,8 @@
 
 #### Target 是什么
 
+>A CMake-based buildsystem is organized as a set of high-level logical targets. Each target corresponds to an executable or library, or is a custom target containing custom commands. Dependencies between the targets are expressed in the buildsystem to determine the build order and the rules for regeneration in response to change.
+
 #### ToolChain 文件的作用
 
 #### CMakeLists.txt 文件的作用
