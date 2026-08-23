@@ -9,14 +9,14 @@
 
 已知的 CMake 的执行阶段：  
 - **CMake Configure 阶段，确认构建配置与环境信息：**  
-    CMake 结合命令行参数，Preset 设置和已有的 `CMakeCache.txt` 文件，取得 Configure 所需的信息。  
-    CMake 加载 `Toolchain` 文件，确认编译器和工具链信息。  
-    CMake 执行 `CMakeLists.txt` 文件，生成 Target 依赖树。  
-    CMake 会将解析结果存储在内存中，并重新写入 `CMakeCache.txt`。  
+        CMake 结合命令行参数，Preset 设置和已有的 `CMakeCache.txt` 文件，取得 Configure 所需的信息。    
+        CMake 执行 `CMakeLists.txt` 文件，生成 Target 依赖树。  
+        CMake 加载 `Toolchain` 文件，确认编译器和工具链信息。
+        CMake 会将解析结果存储在内存中，并重新写入 `CMakeCache.txt`。  
 - **CMake Generate 阶段，根据配置生成构建文件：**  
-    CMake 对 Target 树上的每个 Target 里的每个源文件都生成构建规则，连同 Target 依赖关系一起写入构建文件 `build.ninja`。  
+        CMake 对 Target 树上的每个 Target 里的每个源文件都生成构建规则，连同 Target 依赖关系一起写入构建文件 `build.ninja`。  
 - **CMake Build 阶段，调用构建工具进行编译：**  
-    CMake 调用 Ninja 等构建工具完成编译，此时 CMake 只作为传话筒工作。
+        CMake 调用 Ninja 等构建工具完成编译，此时 CMake 只作为传话筒工作。
 
 
 ## CMake Configure Stage
@@ -91,3 +91,16 @@
 ### 正式的 Configure 阶段
 
 通过命令行参数/预设配置获得 Configure 信息后，CMake 才会开始正式的 Configure 阶段。  
+这时，CMake 会先加载 `Toolchain` 文件，确认编译器和工具链信息，然后执行 `CMakeLists.txt` 文件，生成 Target 依赖树。
+
+#### Target 是什么
+
+#### ToolChain 文件的作用
+
+#### CMakeLists.txt 文件的作用
+
+### Configure 阶段的结束
+
+## CMake Generate Stage
+
+## CMake Build Stage
