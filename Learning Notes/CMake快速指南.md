@@ -1,25 +1,31 @@
 
-# *CMake*速通指南
+# *CMake* 速通指南
 
 ## 记录格式
 
 本文档是笔者学习CMake的笔记，从CMake执行时的 **真实行为** 出发，记录各类文件的作用与规范，并指出其在实际开发中的使用方法或潜在功能。
 
-## *CMake*的执行阶段和内存模型
-
+## *CMake* 的执行阶段和内存模型
 
 已知的 CMake 的执行阶段：  
-~~- 预解析 preset 并生成 `CMakeCache.txt`~~
-~~- 加载 `CMakeCache.txt`~~
-~~- 解析 `CMakeLists.txt` 并生成 `build.ninja` 或 `Makefile`~~
-~~- 调用 `ninja` 或 `make` 执行构建~~
+- CMake Configure 阶段，确认构建配置与环境信息：  
+    CMake 结合命令行参数，Preset 设置和已有的 `CMakeCache.txt` 文件，取得 Configure 所需的信息。  
+    CMake 加载 `Toolchain` 文件，确认编译器和工具链信息。  
+    CMake 执行 `CMakeLists.txt` 文件，生成 Target 依赖树。  
+    CMake 会将解析结果存储在内存中，并重新写入 `CMakeCache.txt`。  
+- CMake Generate 阶段，根据配置生成构建文件：  
+    CMake 对 Target 树上的每个 Target 里的每个源文件都生成构建规则，连同 Target 依赖关系一起写入构建文件 `build.ninja`。  
+- CMake Build 阶段，调用构建工具进行编译：  
+    CMake 调用 Ninja 等构建工具完成编译，此时 CMake 只作为传话筒工作。
 
 
-## 跟我变身*CMake*
+## CMake Configure Stage
+
+在不携带 `--build` 参数启动 CMake 时，默认进入 Configure 阶段，CMake 在此时收集构建配置、环境信息和 Target 树。
 
 ### 预解析 CMakePresets
 
-当携带参数 `--preset` 启动 CMake时，CMake 会首先解析 `CMakePresets.json` 和 `CMakeUserPresets.json` 文件中的预设配置。
+当携带参数 `--preset` 启动 CMake时，CMake 会首先解析 `CMakePresets.json` 和 `CMakeUserPresets.json` 文件中的预设配置。值得注意的是，*指定预设配置与直接使用命令行参数启动 CMake 的效果完全等同*，预设的作用是方便管理和复用配置。
 
 #### CMakePresets 格式规则
 
@@ -42,7 +48,7 @@
 - `include` 字段用于指定子 Preset 文件，子文件也需遵循CMakePresets规则。
 - `configurePresets` 字段定义了配置预设，*CMake 预解析 CMakePresets 的结果完全从此字段产生*。
 
-在阅读 CMakePresets 文件时，我们一般关注到 `include` 和 `configurePresets` 字段即可，前者用于组织各 Preset 文件，后者定义了具体的配置项，在下一节中说明。
+在阅读 CMakePresets 文件时，我们一般关注到 `include` 和 `configurePresets` 字段即可，前者用于组织各 Preset 文件，后者定义了具体的配置项。
 
 #### configurePresets 配置格式
 
@@ -84,5 +90,4 @@
 
 ### 正式的 Configure 阶段
 
-当预解析 CMakePresets 完成后，CMake 已将预设配置加载至内存中，值得注意的是，*指定预设配置与直接使用命令行参数启动 CMake 的效果完全等同*，预设用于方便管理和复用配置。  
 通过命令行参数/预设配置获得 Configure 信息后，CMake 才会开始正式的 Configure 阶段。  
