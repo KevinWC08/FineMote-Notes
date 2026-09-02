@@ -24,7 +24,11 @@ Resolving deltas: 100% (5667/5667), done.
 Updating files: 100% (3875/3875), done.
 ```
 
-完成后，使用 vscode 打开仓库目录（右键 -> 通过Code打开），出现以下界面即为完成：![获取源码](获取源码.png)
+完成后，使用 vscode 打开仓库目录（右键 -> 通过Code打开），出现以下界面即为完成：
+
+<p align="center">
+  <img src="获取源码.png" width="600">
+</p>
 
 ### 配置编译环境
 
@@ -75,7 +79,7 @@ ninja --version
 #### 获取 armclang 编译器
 
 我们推荐使用 armclang 编译器进行编译，armclang 是 ARM 官方提供的编译器，支持最新的 ARM 架构和优化。  
-获取*可以使用的* armclang 编译器，最简单的方式是随 Keil 一同获得。  
+获取*可以使用的* armclang 编译器，最简单的方式是随 Keil 一同获得（如何获得 Keil 的许可建议自行搜索）。  
 在 Keil 安装目录下，armclang 编译器的路径一般为 `\Keil_v5\ARM\ARMCLANG\bin\armclang.exe`，将其添加到环境变量中。
 
 #### 获取 arm-none-eabi-gcc 编译器
@@ -98,16 +102,26 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ### 编译 FineMote
 
-使用CMake 构建 FineMote 的过程如下：
+使用CMake 构建 FineMote，可以选择在命令行中使用 CMake，也可以在 IDE 中使用 CMake 插件进行构建。
 
-#### 选择构建预设
+#### 通过 IDE 构建
 
+以 VSCode 为例，在安装 CMake 插件后打开有效的 CMake 项目目录，插件识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
 
+<p align="center">
+  <img src="使用CMake构建.png" width="200">
+</p>
 
-#### 使用 CMake 构建
+在工作栏中，
+
+#### 使用命令行构建
 
 ### 后记
 
-如果你与笔者一样，第一次接触复杂的工程 C++ 项目，可能会觉得 CMake 的配置与构建有点复杂。  
+如果你与笔者一样，第一次接触复杂的工程 C++ 项目，可能会觉得工程 C++ 项目的配置与构建有点复杂。  
 ~~的确，C++ 的构建流程不说是简洁明了，也只能说是非常复杂。~~  
-CMake 的学习曲线相对陡峭，但掌握 CMake 的使用方法对嵌入式开发是很有帮助的，在此推荐阅读笔者的 CMake 学习笔记
+并且，构建生成工具 CMake 的学习曲线相对陡峭，但掌握 CMake 的使用方法对嵌入式开发又是相对必要的。  
+因此，在此推荐阅读笔者的另一篇笔记 [C++ 构建快速指南](../../Learning%20Notes/C%2B%2B%E6%9E%84%E5%BB%BA%E5%BF%AB%E9%80%9F%E6%8C%87%E5%8D%97.md)，快速了解完整构建一个 C++ 工程的流程，掌握基本的 CMake 使用方法。
+
+## 用 *FineMote* 控制电机
+
