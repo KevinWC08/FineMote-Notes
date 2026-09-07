@@ -111,7 +111,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 以 VSCode 为例，在安装 CMake 插件后打开有效的 CMake 项目目录，插件识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
 
 <p align= "center">
-  <img src= "CMake工具栏.png" width= "200">
+  <img src= "使用CMake构建.png" width= "200">
 </p>
 
 在工作栏中，选择所需的构建配置，比如 `ArmClang / Robomaster_C / Debug`，可保持其余选项不变，点击状态栏中的 ⚙生成 按钮，扩展会自行调用 CMake 命令行工具完成构建，看到以下输出即为构建成功：
