@@ -4,7 +4,9 @@
 FineMote 是一套针对机器人应用的嵌入式代码框架，通过抽象层设计和内置的调度器，为嵌入式开发者提供高效、易用的开发环境。  
 本教程从源码获取与编译开始，基于真实开发场景，手把手指导如何快速上手 FineMote，并在机器人应用中实现具体功能。
 
-## 获取并编译 *FineMote*
+## 获取并构建 *FineMote*
+
+本章从源码获取与开发环境配置开始，完成完整的构建与烧写流程。
 
 ### 获取源码
 
@@ -26,8 +28,8 @@ Updating files: 100% (3875/3875), done.
 
 完成后，使用 vscode 打开仓库目录（右键 -> 通过Code打开），出现以下界面即为完成：
 
-<p align="center">
-  <img src="获取源码.png" width="600">
+<p align= "center">
+  <img src= "获取源码.png" width= "600">
 </p>
 
 ### 配置编译环境
@@ -100,7 +102,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-### 编译 FineMote
+### 编译 *FineMote*
 
 使用CMake 构建 FineMote，可以选择在命令行中使用 CMake，也可以在 IDE 中使用 CMake 插件进行构建。
 
@@ -108,20 +110,111 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 以 VSCode 为例，在安装 CMake 插件后打开有效的 CMake 项目目录，插件识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
 
-<p align="center">
-  <img src="使用CMake构建.png" width="200">
+<p align= "center">
+  <img src= "CMake工具栏.png" width= "200">
 </p>
 
-在工作栏中，
+在工作栏中，选择所需的构建配置，比如 `ArmClang / Robomaster_C / Debug`，可保持其余选项不变，点击状态栏中的 ⚙生成 按钮，扩展会自行调用 CMake 命令行工具完成构建，看到以下输出即为构建成功：
+
+```text
+[driver] 生成完毕: 00:00:00.266
+[build] 生成已完成，退出代码为 0
+```
 
 #### 使用命令行构建
 
+在命令行中进入 FineMote 项目目录，使用 CMake 命令行工具的 `--preset` 参数指定预设进行配置，例如：
+
+```console
+cmake --preset armclang-Robomaster_C-debug
+```
+```text
+-- Configured for armclang toolchain targeting Robomaster_C
+-- finemote_core initialized with modules: Algorithms;Components;Devices;Interface;Services
+-- etl | Version string determined with git describe: 20.47.1
+-- etl | Determined ETL version 20.47.1 from the git tag
+-- Configuring done (5.3s)
+-- Generating done (0.2s)
+-- Build files have been written to: D:/Learn-STM32/FineMote/build/armclang-Robomaster_C-debug
+```
+
+继续使用 `--build` 参数完成构建：
+
+```console
+cmake --build .\build\armclang-Robomaster_C-debug\
+```
+```text
+[0/2] Re-checking globbed directories...
+ninja: no work to do.
+```
+
+### 烧录与调试
+
+在完成编译后我们获得了扩展名为 `.elf` 的可执行文件，接下来我们要使用 ST-Link 和烧录工具将其送上开发板，完成运行调试。  
+关于 ST-Link 的使用，此处不再赘述。若使用其他编程器，相信你肯定已经会正确配置 OpenOCD。
+
+#### 获取烧录工具 OpenOCD
+
+OpenOCD 是一个开源的片上调试器，支持多种调试接口和处理器架构，常用于 ARM 嵌入式系统的烧录与调试。  
+可以在[xPack OpenOCD分发页](https://github.com/xpack-dev-tools/openocd-xpack/releases)获取 OpenOCD，选择对应的操作系统版本，下载后将其解压到任意目录中，并将 `bin` 目录添加至环境变量中。  
+截至此时，OpenOCD 的最新版本为[xpack-openocd-0.12.0-7](https://github.com/xpack-dev-tools/openocd-xpack/releases/download/v0.12.0-7/xpack-openocd-0.12.0-7-win32-x64.zip)。  
+完成安装后，使用命令行运行以下命令，验证 OpenOCD 是否安装成功：
+
+```console
+openocd -v
+```
+```text
+xPack Open On-Chip Debugger 0.12.0+dev-02228-ge5888bda3-dirty (2025-10-04-22:44)
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+```
+
+记得为 vscode 安装[Cortex-Debug插件](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)。
+
+#### 使用 OpenOCD 烧录与调试
+
+Cortex-Debug 可以充当 vscode 的调试客户端，为调试界面与 OpenOCD 的连接提供桥梁，允许我们在熟悉的调试环境中开发。  
+在工作区的 `.vscode` 目录下新建 `launch.json` 文件，配置调试参数：
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Run FineMote With OpenOCD",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+
+            "configFiles": [
+                "${workspaceFolder}/OpenOCD/stm32f4+st-link.cfg"
+            ],
+
+            "runToEntryPoint": "main"
+        }
+    ]
+}
+```
+
+这样，在 vscode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具，启动调试。
+
 ### 后记
 
-如果你与笔者一样，第一次接触复杂的工程 C++ 项目，可能会觉得工程 C++ 项目的配置与构建有点复杂。  
+至此，我们~~理论上~~已经完成了完整的构建和调试流程，接下来就可以在 FineMote 的基础上开发业务了。
+
+插一嘴，如果你与笔者一样，第一次接触复杂的工程 C++ 项目，可能会觉得工程 C++ 项目的配置与构建有点复杂。  
 ~~的确，C++ 的构建流程不说是简洁明了，也只能说是非常复杂。~~  
 并且，构建生成工具 CMake 的学习曲线相对陡峭，但掌握 CMake 的使用方法对嵌入式开发又是相对必要的。  
 因此，在此推荐阅读笔者的另一篇笔记 [C++ 构建快速指南](../../Learning%20Notes/C%2B%2B%E6%9E%84%E5%BB%BA%E5%BF%AB%E9%80%9F%E6%8C%87%E5%8D%97.md)，快速了解完整构建一个 C++ 工程的流程，掌握基本的 CMake 使用方法。
 
-## 用 *FineMote* 控制电机
+## 使用 *FineMote* 完成业务逻辑
+
+### 板卡选择
+
+### 用 *FineMote* 控制电机
 
