@@ -159,7 +159,45 @@ ninja --version
 }
 ```
 
-这样，在 VSCode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具。
+同时，为了实现“仅运行”，同样在 `.vscode` 目录下新建 `tasks.json` 文件，配置运行参数：
+
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ST-Link: Flash and Run",
+            "type": "process",
+            "command": "openocd.exe",
+            "args": [
+                "-f",
+                "${workspaceFolder}/OpenOCD/stm32f4+st-link.cfg",
+                "-c",
+                "program \"${command:cmake.launchTargetPath}\" verify reset exit"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        }
+    ]
+}
+```
+
+之后，使用组合键 Ctrl + K > Ctrl + S，打开快捷方式设置，在右上角找到“打开键盘快捷方式(json)”，在打开的 `keybindings.json` 文件中添加以下内容：
+
+```json
+  {
+    "key": "ctrl+f5",
+    "command": "workbench.action.tasks.runTask",
+    "args": "ST-Link: Flash and Run",
+    "when": "!inDebugMode"
+  }
+```
+
+这样，在 VSCode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具，开始调试；而按下 Ctrl + F5 快捷键时，将会通过终端调用 OpenOCD，完成烧录与运行。
 
 ### 编译 *FineMote*
 
@@ -245,6 +283,7 @@ CLion 已经内置了对 OpenOCD 的支持，但面板配置文件不支持相�
   <img src= "选择OpenOCD路径.png" width= "600">
 </p>
 
+使用 VSCode 烧录和调试的步骤在[前文](#配置调试工具-openocd)已经介绍，在此不再赘述。
 
 ### 后记
 
