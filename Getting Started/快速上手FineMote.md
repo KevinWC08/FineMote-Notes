@@ -32,7 +32,7 @@ Updating files: 100% (3875/3875), done.
   <img src= "获取源码.png" width= "600">
 </p>
 
-### 获取 Arm 工具链
+### 获取 Arm 开发工具链
 
 我们推荐使用 ArmClang 编译器进行编译，ArmClang 是 Arm Compiler for Embedded 工具链中的 C/C++ 编译器。  
 若在获取 ArmClang 编译器时遇到困难，也可以使用 Arm GNU 工具链进行编译。
@@ -54,10 +54,10 @@ Tool: armclang [5f371800]
 Target: unspecified-arm-none-none
 ```
 
-#### 获取 arm-none-eabi-gcc 编译器
+#### 获取 Arm GNU 工具链
 
-arm-none-eabi-gcc 是 Arm GNU Toolchain 中的 GCC 交叉编译器，是开源免费的。  
-可以在[Arm GNU发布页](https://gitlab.arm.com/tooling/gnu-toolchains-for-arm)获取 arm-none-eabi-gcc，选择对应的操作系统版本下载并安装，记得将 arm-none-eabi-gcc 的路径添加到环境变量中，一般为安装目录下的 `bin` 文件夹。  
+arm-none-eabi-gcc 是 Arm GNU Toolchain 中的 GCC 交叉编译器，是开源免费的，随 Arm GNU Toolchain 一同发布。    
+可以在[Arm GNU发布页](https://gitlab.arm.com/tooling/gnu-toolchains-for-arm)获取 Arm GNU Toolchain，选择对应的操作系统版本下载并安装，记得将 Arm GNU Toolchain 的路径添加到环境变量中，一般为安装目录下的 `bin` 文件夹。  
 本文所用环境是[arm-gnu-toolchain-15.3.rel1](https://gitlab.arm.com/api/v4/projects/tooling%2Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/15.3.rel1/arm-gnu-toolchain-15.3.rel1-mingw-w64-x86_64-arm-none-eabi.msi)。  
 完成安装后，使用命令行运行以下命令，验证 arm-none-eabi-gcc 是否安装成功：
 
@@ -75,7 +75,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ### 使用 CLion 开发
 
 如果你使用 CLion 作为开发环境，配置会相对简单。  
-由于 CLion 已经内置了 CMake 和 Ninja，在打开项目目录后，CLion 会自动识别 CMake 项目，在 CLion 设置 > 构建、执行、部署 > CMake 中选择启用所需的 Preset，然后在页面上方的导航栏中选择对应的 Target，就可以使用 Clion 构建了。
+由于 CLion 已经内置了 CMake 和 Ninja，在打开项目目录后，CLion 会自动识别 CMake 项目，在 CLion 设置 > 构建、执行、部署 > CMake 中选择启用所需的 Preset，然后在页面上方根据板卡选择对应的 CMake Target，就可以使用 Clion 构建了。
 
 <div align= "center">
   <img src= "CLion设置.png" width="35%">
@@ -84,7 +84,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ### 使用 VSCode 开发
 
-若你偏好 VSCode 开发，以下是笔者采用的配置方法。
+若你偏好 VSCode 开发，以下是笔者采用的配置方法。  
+值得一提的是，VSCode 并没有内置 GDB 调试器，因此对于 VSCode 而言，[安装 Arm GNU 工具链](#获取-arm-gnu-工具链)是必须的，Cortex-Debug 扩展会调用 arm-none-eabi-gdb 进行调试。
 
 #### 省流版
 
