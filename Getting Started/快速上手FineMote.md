@@ -75,8 +75,8 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ### 使用 CLion 开发
 
 如果你使用 CLion 作为开发环境，配置会相对简单。  
-由于 CLion 已经内置了 CMake 和 Ninja，在打开项目目录后，CLion 会自动识别 CMake 项目，在 CLion 设置 > 构建、执行、部署 > CMake 中选择启用所需的 Preset，然后在页面上方的导航栏中选择对应的 Target，就可使用 Clion 的构建、运行与调试按钮完成开发了
-。
+由于 CLion 已经内置了 CMake 和 Ninja，在打开项目目录后，CLion 会自动识别 CMake 项目，在 CLion 设置 > 构建、执行、部署 > CMake 中选择启用所需的 Preset，然后在页面上方的导航栏中选择对应的 Target，就可以使用 Clion 构建了。
+
 <div align= "center">
   <img src= "CLion设置.png" width="35%">
   <img src= "选择Target.png" width="50%">
@@ -129,6 +129,37 @@ ninja --version
 1.13.2
 ```
 
+#### 配置调试工具 OpenOCD
+
+为 VSCode 安装[Cortex-Debug扩展](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)。  
+在工作区的 `.vscode` 目录下新建 `launch.json` 文件，配置调试参数：
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Run FineMote With OpenOCD",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+
+            "configFiles": [
+                "${workspaceFolder}/OpenOCD/stm32f4+st-link.cfg"
+            ],
+
+            "runToEntryPoint": "main"
+        }
+    ]
+}
+```
+
+这样，在 VSCode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具。
+
 ### 编译 *FineMote*
 
 使用 CMake 构建 FineMote，可以选择在命令行中使用 CMake，也可以在 IDE 中使用 CMake 插件进行构建。
@@ -138,21 +169,6 @@ ninja --version
 FineMote 使用 CMake Presets 统一管理工具链、板卡和构建类型等配置，不同的 configurePresets 对应一组完整的 CMake 配置参数，其格式形如 `toolchain-board-buildtype` ，名称则是 `ToolChain / Board / BuildType`，例如配置 `armclang-MC_Board-debug` 的名称是 `ArmClang / MC_Board / Debug`，表示使用 ArmClang 工具链，为 MC_Board 生成 Debug 构建配置。
 
 各板卡对应的板卡支持包 BSP 已经由 Preset 完成选择，无需手动指定。
-
-#### 通过 IDE 构建
-
-以 VSCode 为例，在安装 CMake Tools扩展后打开有效的 CMake 项目目录，扩展识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
-
-<p align= "center">
-  <img src= "使用CMake构建.png" width= "200">
-</p>
-
-在工作栏中，选择所需的构建配置，比如 `ArmClang / MC_Board / Debug`，可保持其余选项不变，点击状态栏中的 ⚙生成 按钮，扩展会自行调用 CMake 命令行工具完成构建，看到以下输出即为构建成功：
-
-```text
-[driver] 生成完毕: 00:00:00.266
-[build] 生成已完成，退出代码为 0
-```
 
 #### 使用命令行构建
 
@@ -181,6 +197,21 @@ cmake --build .\build\armclang-MC_Board-debug
 Program Size: Code=67788 RO-data=10232 RW-data=40 ZI-data=61520  
 ```
 
+#### 通过 IDE 构建
+
+以 VSCode 为例，在安装 CMake Tools扩展后打开有效的 CMake 项目目录，扩展识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
+
+<p align= "center">
+  <img src= "使用CMake构建.png" width= "200">
+</p>
+
+在工作栏中，选择所需的构建配置，比如 `ArmClang / MC_Board / Debug`，可保持其余选项不变，点击状态栏中的 ⚙生成 按钮，扩展会自行调用 CMake 命令行工具完成构建，看到以下输出即为构建成功：
+
+```text
+[driver] 生成完毕: 00:00:00.266
+[build] 生成已完成，退出代码为 0
+```
+
 ### 烧录与调试
 
 在完成编译后我们获得了扩展名为 `.elf` 的可执行文件，位于 `/build/armclang-MC_Board-debug` 目录下，接下来我们要使用 ST-Link 和烧录工具将其送上开发板，完成运行调试。  
@@ -203,38 +234,16 @@ For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
 ```
 
-记得为 VSCode 安装[Cortex-Debug扩展](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)。
-
 #### 使用 OpenOCD 烧录与调试
 
-OpenOCD 启动 GDB Server，负责与 ST-Link 和目标芯片通信；Cortex-Debug 可以作为 VSCode 的调试扩展，调用 GDB 连接 OpenOCD。
-在工作区的 `.VSCode` 目录下新建 `launch.json` 文件，配置调试参数：
+OpenOCD 启动 GDB Server，负责与 ST-Link 和目标芯片通信。  
+Cortex-Debug 可以作为 VSCode 的调试扩展，调用 GDB 连接 OpenOCD，在 VSCode 中直接启动调试并选择 `Run FineMote With OpenOCD` 调试器即可。  
+CLion 已经内置了对 OpenOCD 的支持，但面板配置文件不支持相对路径，请点击导航栏中的编辑配置，在页面中间的“面板配置文件”一栏**手动输入绝对路径**，对象为仓库目录下的 `./OpenOCD/stm32f4+st-link.cfg` 文件，随后便可以使用 CLion 烧录并调试了。
 
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        
-        {
-            "name": "Run FineMote With OpenOCD",
-            "type": "cortex-debug",
-            "request": "launch",
-            "servertype": "openocd",
-            
-            "cwd": "${workspaceFolder}",
-            "executable": "${command:cmake.launchTargetPath}",
+<p align= "center">
+  <img src= "选择OpenOCD路径.png" width= "600">
+</p>
 
-            "configFiles": [
-                "${workspaceFolder}/OpenOCD/stm32f4+st-link.cfg"
-            ],
-
-            "runToEntryPoint": "main"
-        }
-    ]
-}
-```
-
-这样，在 VSCode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具，启动调试。
 
 ### 后记
 
