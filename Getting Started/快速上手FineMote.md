@@ -10,7 +10,7 @@ FineMote 是一套针对机器人应用的嵌入式代码框架，通过抽象�
 
 ### 获取源码
 
-FineMote 当前通过[GitHub](https://github.com/FINS-Fines/FineMote)分发，可以使用 vscode 自带的存储库功能克隆 https://github.com/FINS-Fines/FineMote.git ，或者在命令行中使用以下指令获取源码：
+FineMote 当前通过[GitHub](https://github.com/FINS-Fines/FineMote)分发，可以使用 VSCode 自带的存储库功能克隆 https://github.com/FINS-Fines/FineMote.git ，或者在命令行中使用以下指令获取源码：
 
 ```console
 git clone --recurse-submodules https://github.com/FINS-Fines/FineMote.git
@@ -26,31 +26,75 @@ Resolving deltas: 100% (5667/5667), done.
 Updating files: 100% (3875/3875), done.
 ```
 
-完成后，使用 vscode 打开仓库目录（右键 -> 通过Code打开），出现以下界面即为完成：
+完成后，使用 VSCode 打开仓库目录（右键 -> 通过Code打开），出现以下界面即为完成：
 
 <p align= "center">
   <img src= "获取源码.png" width= "600">
 </p>
 
-### 配置编译环境
+### 获取 Arm 工具链
 
-FineMote 支持多种工具链，本文以 Windows 平台为例，推荐使用 ArmClang 编译器进行编译。
+我们推荐使用 ArmClang 编译器进行编译，ArmClang 是 Arm Compiler for Embedded 工具链中的 C/C++ 编译器。  
+若在获取 ArmClang 编译器时遇到困难，也可以使用 Arm GNU 工具链进行编译。
+
+#### 获取 ArmClang 编译器
+
+获取*可以使用的* ArmClang 编译器，最简单的方式是随 Keil 一同获得（如何获得 Keil 的许可建议自行搜索）。  
+在 Keil 安装目录下，ArmClang 编译器的路径一般为 `\Keil_v5\ARM\ARMCLANG\bin\armclang.exe`，将其添加到环境变量中。  
+完成后，使用命令行运行以下命令，验证 ArmClang 是否安装成功：
+
+```console
+armclang --version
+```
+```text
+Product: MDK Plus 5.43
+Component: Arm Compiler for Embedded 6.24
+Tool: armclang [5f371800]
+
+Target: unspecified-arm-none-none
+```
+
+#### 获取 arm-none-eabi-gcc 编译器
+
+arm-none-eabi-gcc 是 Arm GNU Toolchain 中的 GCC 交叉编译器，是开源免费的。  
+可以在[Arm GNU发布页](https://gitlab.arm.com/tooling/gnu-toolchains-for-arm)获取 arm-none-eabi-gcc，选择对应的操作系统版本下载并安装，记得将 arm-none-eabi-gcc 的路径添加到环境变量中，一般为安装目录下的 `bin` 文件夹。  
+本文所用环境是[arm-gnu-toolchain-15.3.rel1](https://gitlab.arm.com/api/v4/projects/tooling%2Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/15.3.rel1/arm-gnu-toolchain-15.3.rel1-mingw-w64-x86_64-arm-none-eabi.msi)。  
+完成安装后，使用命令行运行以下命令，验证 arm-none-eabi-gcc 是否安装成功：
+
+```console
+arm-none-eabi-gcc --version
+```
+```text
+arm-none-eabi-gcc (Arm GNU Toolchain 15.3.Rel1 (Build arm-15.149)) 15.3.1 20260627
+Copyright (C) 2025 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+
+### 使用 CLion 开发
+
+如果你使用 CLion 作为开发环境，配置会相对简单。  
+由于 CLion 已经内置了 CMake 和 Ninja，在打开项目目录后，CLion 会自动识别 CMake 项目，在 CLion 设置 > 构建、执行、部署 > CMake 中选择启用所需的 Preset，然后在页面上方的导航栏中选择对应的 Target，就可使用 Clion 的构建、运行与调试按钮完成开发了
+。
+<div align= "center">
+  <img src= "CLion设置.png" width="35%">
+  <img src= "选择Target.png" width="50%">
+</div>
+
+### 使用 VSCode 开发
+
+若你偏好 VSCode 开发，以下是笔者采用的配置方法。
 
 #### 省流版
 
 1. 下载并安装[CMake 4.4.2](https://github.com/Kitware/CMake/releases/download/v4.4.2/cmake-4.4.2-windows-x86_64.msi)，勾选 *Add CMake to the system PATH for all users*。  
-2. 下载并解压[Ninja 1.13.2](https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-win.zip)。  
-3. 获取 ARM 编译工具链：  
-    - 通过 Keil 获取 ArmClang 编译器
-    - 或者，下载并安装[arm-gnu-toolchain-15.3.rel1](https://gitlab.arm.com/api/v4/projects/tooling%2Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/15.3.rel1/arm-gnu-toolchain-15.3.rel1-mingw-w64-x86_64-arm-none-eabi.msi)。  
-4. 为 Ninja 和 ArmClang （或 arm-none-eabi-gcc） 添加环境变量。  
-5. 在 vscode 中安装[CMake Tools扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)。  
-6. 快速校验环境：  
+2. 下载并解压[Ninja 1.13.2](https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-win.zip)，并为其添加环境变量。  
+3. 在 VSCode 中安装[CMake Tools扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)。  
+4. 快速校验环境：  
     ```console
     cmake --version
     ninja --version
-    armclang --version
-    arm-none-eabi-gcc --version
     ```
 
 #### 安装 CMake
@@ -69,7 +113,7 @@ cmake version 4.4.2
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ```
 
-记得为 vscode 安装[CMake Tools扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)。
+记得为 VSCode 安装[CMake Tools扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)。
 
 #### 安装 Ninja
 
@@ -85,30 +129,6 @@ ninja --version
 1.13.2
 ```
 
-#### 获取 ArmClang 编译器
-
-我们推荐使用 ArmClang 编译器进行编译，ArmClang 是 Arm Compiler for Embedded 工具链中的 C/C++ 编译器。
-获取*可以使用的* ArmClang 编译器，最简单的方式是随 Keil 一同获得（如何获得 Keil 的许可建议自行搜索）。  
-在 Keil 安装目录下，ArmClang 编译器的路径一般为 `\Keil_v5\ARM\ARMCLANG\bin\armclang.exe`，将其添加到环境变量中。
-
-#### 获取 arm-none-eabi-gcc 编译器
-
-若在获取 ArmClang 编译器时遇到困难，也可以使用 Arm GNU 工具链进行编译。  
-arm-none-eabi-gcc 是 Arm GNU Toolchain 中的 GCC 交叉编译器，是开源免费的。  
-可以在[Arm GNU发布页](https://gitlab.arm.com/tooling/gnu-toolchains-for-arm)获取 arm-none-eabi-gcc，选择对应的操作系统版本下载并安装，记得将 arm-none-eabi-gcc 的路径添加到环境变量中，一般为安装目录下的 `bin` 文件夹。  
-本文所用环境是[arm-gnu-toolchain-15.3.rel1](https://gitlab.arm.com/api/v4/projects/tooling%2Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/15.3.rel1/arm-gnu-toolchain-15.3.rel1-mingw-w64-x86_64-arm-none-eabi.msi)。  
-完成安装后，使用命令行运行以下命令，验证 arm-none-eabi-gcc 是否安装成功：
-
-```console
-arm-none-eabi-gcc --version
-```
-```text
-arm-none-eabi-gcc (Arm GNU Toolchain 15.3.Rel1 (Build arm-15.149)) 15.3.1 20260627
-Copyright (C) 2025 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
-
 ### 编译 *FineMote*
 
 使用 CMake 构建 FineMote，可以选择在命令行中使用 CMake，也可以在 IDE 中使用 CMake 插件进行构建。
@@ -117,7 +137,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 FineMote 使用 CMake Presets 统一管理工具链、板卡和构建类型等配置，不同的 configurePresets 对应一组完整的 CMake 配置参数，其格式形如 `toolchain-board-buildtype` ，名称则是 `ToolChain / Board / BuildType`，例如配置 `armclang-MC_Board-debug` 的名称是 `ArmClang / MC_Board / Debug`，表示使用 ArmClang 工具链，为 MC_Board 生成 Debug 构建配置。
 
-各板卡对应的板卡支持包 BSP 已经由 preset 完成选择，无需手动指定。
+各板卡对应的板卡支持包 BSP 已经由 Preset 完成选择，无需手动指定。
 
 #### 通过 IDE 构建
 
@@ -183,12 +203,12 @@ For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
 ```
 
-记得为 vscode 安装[Cortex-Debug扩展](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)。
+记得为 VSCode 安装[Cortex-Debug扩展](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)。
 
 #### 使用 OpenOCD 烧录与调试
 
-OpenOCD 启动 GDB Server，负责与 ST-Link 和目标芯片通信；Cortex-Debug 可以作为 vscode 的调试扩展，调用 GDB 连接 OpenOCD。
-在工作区的 `.vscode` 目录下新建 `launch.json` 文件，配置调试参数：
+OpenOCD 启动 GDB Server，负责与 ST-Link 和目标芯片通信；Cortex-Debug 可以作为 VSCode 的调试扩展，调用 GDB 连接 OpenOCD。
+在工作区的 `.VSCode` 目录下新建 `launch.json` 文件，配置调试参数：
 
 ```json
 {
@@ -214,7 +234,7 @@ OpenOCD 启动 GDB Server，负责与 ST-Link 和目标芯片通信；Cortex-Deb
 }
 ```
 
-这样，在 vscode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具，启动调试。
+这样，在 VSCode 中启动调试并选择 `Run FineMote With OpenOCD` 调试器时，将会通过 Cortex-Debug 扩展调用 OpenOCD 命令行工具，启动调试。
 
 ### 后记
 
