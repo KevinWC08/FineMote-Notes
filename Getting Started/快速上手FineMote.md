@@ -67,7 +67,6 @@ cmake --version
 cmake version 4.4.2
 
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
-
 ```
 
 记得为 vscode 安装[CMake Tools扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)。
@@ -122,7 +121,7 @@ FineMote 使用 CMake Presets 统一管理工具链、板卡和构建类型等�
 
 #### 通过 IDE 构建
 
-以 VSCode 为例，在安装 CMake Tools扩展后打开有效的 CMake 项目目录，插件识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
+以 VSCode 为例，在安装 CMake Tools扩展后打开有效的 CMake 项目目录，扩展识别后在左侧功能栏会出现 CMake 图标，点击后会显示 CMake 工具栏。
 
 <p align= "center">
   <img src= "使用CMake构建.png" width= "200">
@@ -226,7 +225,10 @@ OpenOCD 启动 GDB Server，负责与 ST-Link 和目标芯片通信；Cortex-Deb
 并且，构建生成工具 CMake 的学习曲线相对陡峭，但掌握 CMake 的使用方法对嵌入式开发又是相对必要的。  
 因此，在此推荐阅读笔者的另一篇笔记 [C++ 构建快速指南](../../Learning%20Notes/C%2B%2B%E6%9E%84%E5%BB%BA%E5%BF%AB%E9%80%9F%E6%8C%87%E5%8D%97.md)，快速了解完整构建一个 C++ 工程的流程，掌握基本的 CMake 使用方法。
 
-## 使用 *FineMote* 完成业务逻辑
+## 使用 *FineMote* 实现业务逻辑
+
+配置好开发环境之后，我们就可以开始写业务了。  
+本章从基础的电机控制开始，逐步介绍 FineMote 的使用方法，并建立基本的结构概念。
 
 ### 板卡选择
 
