@@ -15,7 +15,7 @@
 - 汇编器（Assembler）将汇编代码汇编为目标文件（.o）。  
 - 链接器（Linker）将目标文件链接为可执行文件（.exe/.elf）。
 
-接下来，我们将以 Arm GNU 工具链为例，说明 C++ 构建的具体过程。
+接下来，我们将说明 C++ 构建的具体过程。
 
 ### 工具链是什么
 
@@ -203,7 +203,7 @@ void hello();
 >The add_executable() command defines an executable target
 
 Executable 是一个可执行文件，由多个目标文件链接而成，一般就是整个构建流程的产物。  
-在嵌入式构建体系中，Executable 的源一般是 `.s` 的启动文件，其中调用了 Arm C++ 运行时的 `__main` 函数，最终会调用用户的 `main()` 函数，由此完成程序启动。
+在嵌入式构建体系中，Executable 的源一般是 `.s` 的启动文件，其中调用了 Arm C++ 运行时的 `__main` 函数，并最终会调用用户的 `main()` 函数，由此完成程序启动。
 
 以 FineMote 中[某配置](../../CMakeLists.txt#5)为例（已人工替换宏）：
 ```cmake
